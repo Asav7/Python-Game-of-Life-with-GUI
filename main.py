@@ -5,9 +5,6 @@ import tkinter as tk
 
 def get_neighbors(row_index, col_index, array):
     """
-    :param row_index:
-    :param col_index:
-    :param array: numpy array
     :return: integer - number of neighbours for cell located in the array at (row_index, col_index)
     """
     return np.sum(array[row_index - 1: row_index + 2, col_index - 1: col_index + 2]) - array[row_index, col_index]
@@ -24,9 +21,8 @@ class Grid(object):
 
     def __init__(self, width, height, master):
         """
-        :param width:
-        :param height:
-        :param master:
+        :param width: grid's width (in cells)
+        :param height: grid's width (in cells)
         """
         self.master = master
         self.width = width
