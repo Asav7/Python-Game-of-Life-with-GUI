@@ -34,7 +34,7 @@ class Grid(object):
         self._animation_stopped = True
         self.init_app()
 
-    def set_random_state(self, fill_rate=0.20):
+    def set_random_state(self, fill_rate=0.25):
         self.clear_window()
         for row_index in range(0, self.height):
             for col_index in range(0, self.width):
@@ -120,7 +120,7 @@ class Grid(object):
 
         fill_rate_entry = tk.Entry(frame)
         fill_rate_entry.grid(row=0, column=1, sticky=tk.W, padx=4)
-        fill_rate_entry.insert(0, 0.20)
+        fill_rate_entry.insert(0, 0.25)
 
         set_random_button = tk.Button(frame, text="Set random state")
         set_random_button.bind("<Button-1>", lambda x: self.set_random_state(fill_rate=float(fill_rate_entry.get())))
@@ -148,8 +148,8 @@ class Grid(object):
 
         self.canvas = tk.Canvas(
             self.master,
-            width=(self.width) * self._cell_width,
-            height=(self.height) * self._cell_height,
+            width=self.width * self._cell_width,
+            height=self.height * self._cell_height,
             relief=tk.GROOVE,
             bd=2,
             )
@@ -160,6 +160,7 @@ class Grid(object):
 
 def main():
     root = tk.Tk()
+    root.title("Conway's Game of Life")
     Grid(width=80, height=55, master=root)
     root.mainloop()
 
