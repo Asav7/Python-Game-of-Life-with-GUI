@@ -10,9 +10,9 @@ def get_neighbors(row_index, col_index, array):
     return np.sum(array[row_index - 1: row_index + 2, col_index - 1: col_index + 2]) - array[row_index, col_index]
 
 
-def tagmaker(row_index, col_index):
+def create_tag(row_index, col_index):
     """
-    creates tags for identifying cells drawn on canvas.
+    creates tag for identifying cells drawn on canvas.
     :return: string: "row_index-col_index"
     """
     return str(row_index) + "-" + str(col_index)
@@ -58,12 +58,12 @@ class Grid(object):
                             col_index * self._cell_width + self._cell_width,
                             row_index * self._cell_height + self._cell_height,
                             fill="#550000",
-                            tags=(tagmaker(row_index, col_index)),
+                            tags=(create_tag(row_index, col_index)),
                         )
                 else:  # cell is alive
                     if get_neighbors(row_index, col_index, self.array) not in (2, 3):
                         array_post_step[row_index, col_index] = 0
-                        self.canvas.delete(self.canvas.find_withtag(tagmaker(row_index, col_index)))
+                        self.canvas.delete(self.canvas.find_withtag(create_tag(row_index, col_index)))
         self.array = array_post_step
 
     def visualize_array(self):
@@ -77,7 +77,7 @@ class Grid(object):
                         col_index * self._cell_width + self._cell_width,
                         row_index * self._cell_height + self._cell_height,
                         fill="#550000",
-                        tags=(tagmaker(row_index, col_index)),
+                        tags=(create_tag(row_index, col_index)),
                     )
 
     def animate(self):
