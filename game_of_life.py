@@ -12,7 +12,7 @@ def get_neighbors(row_index, col_index, array):
 
 def create_tag(row_index, col_index):
     """
-    creates tag for identifying cells drawn on canvas.
+    creates tag for identifying cell drawn on canvas.
     :return: string: "row_index-col_index"
     """
     return str(row_index) + "-" + str(col_index)
