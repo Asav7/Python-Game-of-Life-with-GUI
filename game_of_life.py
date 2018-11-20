@@ -1,4 +1,3 @@
-import random
 import numpy as np
 import tkinter as tk
 
@@ -28,8 +27,7 @@ class Grid(object):
         self.master = master
         self.width = width
         self.height = height
-        self.empty_array = np.array([[0 for x in range(self.width)] for y in range(self.height)])
-        self.array = self.empty_array.copy()
+        self.array = np.zeros((self.height, self.width))
         self._cell_width = 10
         self._cell_height = 10
         self._animation_stopped = True
@@ -37,48 +35,36 @@ class Grid(object):
 
     def set_random_state(self, fill_rate=0.25):
         self.clear_window()
-        for row_index in range(0, self.height):
-            for col_index in range(0, self.width):
-                if random.random() <= fill_rate:
-                    self.array[row_index, col_index] = 1
-                else:
-                    self.array[row_index, col_index] = 0
+        self.array = (np.random.random(self.array.shape) < fill_rate).astype(int)
         self.visualize_array()
 
     def step_and_draw(self):
         array_post_step = self.array.copy()
-        for row_index in range(self.height):
-            for col_index in range(self.width):
-                if self.array[row_index, col_index] == 0:  # cell is dead
-                    if get_neighbors(row_index, col_index, self.array) == 3:
-                        array_post_step[row_index, col_index] = 1
-                        self.canvas.create_rectangle(
-                            col_index * self._cell_width,
-                            row_index * self._cell_height,
-                            col_index * self._cell_width + self._cell_width,
-                            row_index * self._cell_height + self._cell_height,
-                            fill="#550000",
-                            tags=(create_tag(row_index, col_index)),
-                        )
-                else:  # cell is alive
-                    if get_neighbors(row_index, col_index, self.array) not in (2, 3):
-                        array_post_step[row_index, col_index] = 0
-                        self.canvas.delete(self.canvas.find_withtag(create_tag(row_index, col_index)))
+        for (row_index, col_index), value in np.ndenumerate(array_post_step):
+            if value == 0:  # cell is dead
+                if get_neighbors(row_index, col_index, self.array) == 3:
+                    array_post_step[row_index, col_index] = 1
+                    self.fill_cell(col_index, row_index)
+            else:  # cell is alive
+                if get_neighbors(row_index, col_index, self.array) not in (2, 3):
+                    array_post_step[row_index, col_index] = 0
+                    self.canvas.delete(self.canvas.find_withtag(create_tag(row_index, col_index)))
         self.array = array_post_step
 
     def visualize_array(self):
+        for (row_index, col_index), value in np.ndenumerate(self.array):
+            if value == 1:
+                self.fill_cell(col_index, row_index)
 
-        for row_index in range(self.height):
-            for col_index in range(self.width):
-                if self.array[row_index, col_index] == 1:
-                    self.canvas.create_rectangle(
-                        col_index * self._cell_width,
-                        row_index * self._cell_height,
-                        col_index * self._cell_width + self._cell_width,
-                        row_index * self._cell_height + self._cell_height,
-                        fill="#550000",
-                        tags=(create_tag(row_index, col_index)),
-                    )
+    def fill_cell(self, col_index, row_index, color="#550000"):
+        self.canvas.create_rectangle(
+            col_index * self._cell_width,
+            row_index * self._cell_height,
+            col_index * self._cell_width + self._cell_width,
+            row_index * self._cell_height + self._cell_height,
+            fill=color,
+            tags=(create_tag(row_index, col_index)),
+        )
 
     def animate(self):
         if self._animation_stopped is False:
@@ -99,7 +85,7 @@ class Grid(object):
 
     def clear_window(self, *args):
         self.stop_animation()
-        self.array = self.empty_array.copy()
+        self.array = np.zeros((self.height, self.width))
         self.canvas.delete(tk.ALL)
 
     def gosper_glider_gun(self, *args):
