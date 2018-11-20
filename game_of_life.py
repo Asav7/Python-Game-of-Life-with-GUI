@@ -2,21 +2,6 @@ import numpy as np
 import tkinter as tk
 
 
-def get_neighbors(row_index, col_index, array):
-    """
-    :return: integer: number of neighbours for cell located in the array at (row_index, col_index)
-    """
-    return np.sum(array[row_index - 1: row_index + 2, col_index - 1: col_index + 2]) - array[row_index, col_index]
-
-
-def create_tag(row_index, col_index):
-    """
-    Creates tag for identifying cell with (row_index, col_index) drawn on canvas.
-    :return: String: "row_index-col_index"
-    """
-    return str(row_index) + "-" + str(col_index)
-
-
 class Grid(object):
 
     def __init__(self, width: int, height: int, master: tk.Tk):
@@ -25,6 +10,7 @@ class Grid(object):
         :param height: Integer - how many cells high should the grid be
         :param master: Tk object instance
         """
+
         self.master = master
         self.width = width
         self.height = height
@@ -32,8 +18,20 @@ class Grid(object):
         self._cell_width = 10
         self._cell_height = 10
         self._animation_stopped = True
-        self.init_app()
         self.canvas = None
+        # Initialize GUI
+        self.init_app()
+
+    @staticmethod
+    def get_neighbors(row_index, col_index, array):
+        """ Returns integer - number of neighbours for cell located in the array at (row_index, col_index) """
+        return np.sum(array[row_index - 1: row_index + 2, col_index - 1: col_index + 2]) - array[
+            row_index, col_index]
+
+    @staticmethod
+    def create_tag(row_index, col_index):
+        """ Creates tag (string) for identifying cell with (row_index, col_index) drawn on canvas. """
+        return str(row_index) + "-" + str(col_index)
 
     def set_random_state(self, fill_rate=0.25):
         """ Marks given percentage (fill_rate) of cells as alive. """
@@ -48,15 +46,15 @@ class Grid(object):
 
             # If cell is dead:
             if value == 0:
-                if get_neighbors(row_index, col_index, self.array) == 3:
+                if self.get_neighbors(row_index, col_index, self.array) == 3:
                     array_post_step[row_index, col_index] = 1
                     self.fill_cell(col_index, row_index)
 
             # If cell is alive
             else:
-                if get_neighbors(row_index, col_index, self.array) not in (2, 3):
+                if self.get_neighbors(row_index, col_index, self.array) not in (2, 3):
                     array_post_step[row_index, col_index] = 0
-                    self.canvas.delete(self.canvas.find_withtag(create_tag(row_index, col_index)))
+                    self.canvas.delete(self.canvas.find_withtag(self.create_tag(row_index, col_index)))
         self.array = array_post_step  # update array
 
     def visualize_array(self):
@@ -73,7 +71,7 @@ class Grid(object):
             col_index * self._cell_width + self._cell_width,
             row_index * self._cell_height + self._cell_height,
             fill=color,
-            tags=(create_tag(row_index, col_index)),
+            tags=(self.create_tag(row_index, col_index)),
         )
 
     def animate(self):
