@@ -126,35 +126,30 @@ class Grid(object):
         fill_rate_entry.grid(row=0, column=1, sticky=tk.W, padx=4)
         fill_rate_entry.insert(0, 0.25)
 
-        # Create button which will randomly fill specified grid percentage.
-        set_random_button = tk.Button(frame, text="Set random state")
-        set_random_button.bind("<Button-1>", lambda x: self.set_random_state(fill_rate=float(fill_rate_entry.get())))
-        set_random_button.grid(row=0, column=2, sticky=tk.W)
+        # Create helper function for creating buttons.
+        def create_button(master, text, bind_function, row, column, **kw):
+            """
+            Helper function for creating buttons
+            """
+            button = tk.Button(master, text=text)
+            button.bind("<Button-1>", bind_function)
+            button.grid(row=row, column=column, **kw)
 
-        # Create button for deleting all filled cells
-        clear_window = tk.Button(frame, text="Clear window")
-        clear_window.bind("<Button-1>", self.clear_window)
-        clear_window.grid(row=0, column=3, sticky=tk.W)
-
-        # Create button for starting animation from current state
-        run_animation = tk.Button(frame, text="Run animation")
-        run_animation.bind("<Button-1>", self.begin_animation)
-        run_animation.grid(row=0, column=4)
-
-        # Create button for stopping animation on current state
-        stop_animation_button = tk.Button(frame, text="Stop animation")
-        stop_animation_button.bind("<Button-1>", self.stop_animation)
-        stop_animation_button.grid(row=0, column=5)
-
-        # Create button for moving into next step of the animation
-        take_one_step = tk.Button(frame, text="Take one step")
-        take_one_step.bind("<Button-1>", self.take_one_step)
-        take_one_step.grid(row=0, column=6)
-
-        # Create button which will create new animation with Gosper Glider Gun
-        gosper_glider_gun = tk.Button(frame, text="Gosper Glider Gun")
-        gosper_glider_gun.bind("<Button-1>", self.gosper_glider_gun)
-        gosper_glider_gun.grid(row=0, column=7)
+        # Create buttons:
+        # for randomly filling specified grid percentage.
+        create_button(frame, "Set random state", row=0, column=2, sticky=tk.W,
+                      bind_function=lambda x: self.set_random_state(fill_rate=float(fill_rate_entry.get())))
+        # for deleting all filled cells
+        create_button(frame, "Clear window new", self.clear_window, row=0, column=3, sticky=tk.W)
+        # for starting animation from current state
+        create_button(frame, "Run animation", self.begin_animation, row=0, column=4)
+        # for stopping animation on current state
+        create_button(frame, "Stop animation", self.stop_animation, row=0, column=5)
+        # for moving into next step of the animation
+        create_button(frame, "Take one step", self.take_one_step, row=0, column=6)
+        # for creating a new animation with Gosper Glider Gun
+        create_button(frame, "Gosper Glider Gun", self.gosper_glider_gun, row=0, column=7)
+        # All buttons created
 
         # Create canvas to draw on
         self.canvas = tk.Canvas(
